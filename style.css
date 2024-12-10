@@ -1,0 +1,32 @@
+/* styling play, pause and stop buttons */
+.button {
+    border-radius: 5px;
+}
+
+/* styling reset buttons */
+.resetButton {
+    border-radius: 5px;
+    background-color: RGB(173, 138, 255);
+}
+
+/* styling skip buttons */
+.skipButton {
+    border-radius: 5px;
+    color: white;
+    background-color: RGB(51, 55, 69);
+    width: 120px;
+}
+
+/* styling sliders */
+.slider {
+    appearance: none;
+    border: 1px solid black;
+}
+
+/* styling the slider knobs */
+.slider::-webkit-slider-thumb {
+    appearance: none;
+    width: 15px;
+    height: 15px;
+    background-color: RGB(51, 55, 69);
+}

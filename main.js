@@ -2,7 +2,11 @@
 let soundSelect, currSound, prevSound;
 let brightSound, industrialSound, synthSound;
 
-// initialising recording elements
+// ===========================
+// STAGE 1: PLAYBACK CONTROLS:
+// ===========================
+
+// recording elements
 let mic, recorder;
 let soundFile;
 // 0: idle, 1: recording, 2: playback ready
@@ -22,15 +26,46 @@ let resetPanButton;
 let rateSlider;
 let resetRateButton;
 
+// ===========================
+// STAGE 2: EFFECT CONTROLS:
+// ===========================
+
+// LOW-PASS FILTER
+let lowpass, lowpassButton;
+let lowpassFreqSlider, lowpassResonanceSlider;
+let lowpassDryWetSlider, lowpassVolumeSlider;
+
+// DYNAMIC COMPRESSOR
+let compressor;
+
+// REVERB
+let reverb;
+
+// WAVESHAPER DISTORTION
+let distortion;
+
+// SPECTRUM IN / OUT
+
 function preload() {
     brightSound = loadSound("sounds/476070__jjmarsan__hello-user-bright-cheery-intro-music.wav");
     industrialSound = loadSound("sounds/476072__jjmarsan__wax-track-industrial-idm-score-music.mp3");
     synthSound = loadSound("sounds/487440__jjmarsan__tattle-vintage-synth-industrial-loop.wav");
+
+    // using of lowpass, compressor, reverb, and distortion
+    lowpass = new p5.LowPass();
+    compressor = new p5.Compressor();
+    reverb = new p5.Reverb();
+    distortion = new p5.Distortion();
 }
 
 function setup() {
-    createCanvas(400, 400);
+
+    createCanvas(800, 400);
     background(128, 138, 159);
+
+    // ===========================
+    // STAGE 1: PLAYBACK CONTROLS:
+    // ===========================
 
     // MIC SETUP - may not work in certain browsers
     mic = new p5.AudioIn();
@@ -38,7 +73,7 @@ function setup() {
     // setting input for recorder to be the mic
     recorder = new p5.SoundRecorder();
     recorder.setInput(mic);
-    // creates empty sound container
+    // creates empty audio container
     soundFile = new p5.SoundFile();
 
     // AUDIO SELECTION DROPDOWN MENU
@@ -50,7 +85,7 @@ function setup() {
     soundSelect.option("Vintage Synth Music");
     // adding recorded audio selection as disabled
     soundSelect.option("Recorded Audio");
-    soundSelect.disable("Recorded Audio")
+    soundSelect.disable("Recorded Audio");
     // adding default selection
     soundSelect.selected("Bright Cheery Intro Music");
     currSound = brightSound;
@@ -131,100 +166,47 @@ function setup() {
     recordButton.position(260, 180);
     recordButton.mousePressed(recordAudio);
     recordButton.addClass("recordButton");
-}
 
-function playPauseSound() {
-    // PAUSING AUDIO
-    if (currSound.isPlaying()) {
-        currSound.pause();
-        playPauseButton.html("PLAY");
-        playPauseButton.style("background", "RGB(0, 255, 0)");
-    }
+    // ===========================
+    // STAGE 2: EFFECT CONTROLS:
+    // ===========================
 
-    // PLAYING AUDIO
-    else {
-        currSound.play()
-        playPauseButton.html("PAUSE");
-        playPauseButton.style("background", "RGB(255, 165, 0)");
-    }
-}
-
-function stopSound() {
-    // STOPPING AUDIO EVEN WHEN PAUSED
-    currSound.stop();
-    playPauseButton.html("PLAY");
-    playPauseButton.style("background", "RGB(0, 255, 0)");
-}
-
-function loopToggle() {
-    if (loopOn) {
-        loopOn = false;
-        loopButton.html("LOOP OFF");
-    }
+    // LOW-PASS FILTER
+    lowpassButton = createButton("ENABLE");
+    lowpassButton.position(440, 160);
+    lowpassButton.mousePressed(applyLowPass);
+    lowpassButton.addClass("applyButton");
     
-    else {
-        loopOn = true;
-        loopButton.html("LOOP ON");
-    }
+    lowpassFreqSlider = createSlider(100, 22050, 500, 10);
+    lowpassFreqSlider.position(415, 90);
+    lowpassFreqSlider.addClass("effectSlider");
     
-    // SETTING currSound's LOOP
-    currSound.setLoop(loopOn);
-}
+    lowpassResonanceSlider = createSlider(0, 10, 5, 1);
+    lowpassResonanceSlider.position(450, 90);
+    lowpassResonanceSlider.addClass("effectSlider");
+    
+    lowpassDryWetSlider = createSlider(0, 1, 0.6, 0.1);
+    lowpassDryWetSlider.position(485, 90);
+    lowpassDryWetSlider.addClass("effectSlider");
+    
+    lowpassVolumeSlider = createSlider(0, 1, 0.5, 0.01);
+    lowpassVolumeSlider.position(520, 90);
+    lowpassVolumeSlider.addClass("effectSlider");
+    
+    // DYNAMIC COMPRESSOR
+    // REVERB
+    // WAVESHAPER DISTORTION
+    // SPECTRUM IN / OUT
 
-function resetVol() {
-    volumeSlider.value(1);
-}
-
-function resetPan() {
-    panSlider.value(0);
-}
-
-function resetRate() {
-    rateSlider.value(1);
-}
-
-function skipToStart() {
-    let dur = currSound.duration();
-    currSound.jump(0);
-}
-
-function skipToEnd() {
-    let dur = currSound.duration();
-    currSound.jump(dur-5);
-}
-
-function recordAudio() {
-    // ensures audioContext is running
-    if (getAudioContext().state !== "running") {
-        getAudioContext().resume();
-    }
-
-    // CHANGING FUNCTIONALITY BASED ON STATE
-    // 0: idle - goes to recording state
-    if (state === 0 && mic.enabled) {
-        recorder.record(soundFile);
-        state++;
-        recordButton.html("STOP")
-    }
-    // 1: recording - goes to stopping state
-    else if (state === 1) {
-        recorder.stop();
-        state++;
-        recordButton.html("USE AUDIO")
-    }
-    // 2: playback ready - goes to playing & storing state
-    else if (state === 2) {
-        soundFile.play();
-        state = 0;
-        recordButton.html("RECORD");
-        soundSelect.selected("Recorded Audio");
-        currSound = soundFile;
-    }
 }
 
 function draw() {
-    let soundChoice = soundSelect.value();
 
+    // ===========================
+    // STAGE 1: PLAYBACK CONTROLS:
+    // ===========================
+    let soundChoice = soundSelect.value();
+    
     if (soundChoice != prevSound) {
         // STOPPING AUDIO IF DIFFERENT SELECTION
         if (currSound.isPlaying()) {
@@ -232,7 +214,7 @@ function draw() {
         }
         playPauseButton.html("PLAY");
         playPauseButton.style("background", "RGB(0, 255, 0)");
-
+        
         // CHANGING AUDIO USED
         if (soundChoice == "Bright Cheery Intro Music") {
             currSound = brightSound;
@@ -244,7 +226,7 @@ function draw() {
             currSound = synthSound;
         }
         prevSound = soundChoice;
-
+        
         // SETTING currSound's LOOP
         currSound.setLoop(loopOn);
     }
@@ -254,7 +236,7 @@ function draw() {
         playPauseButton.html("PLAY");
         playPauseButton.style("background", "RGB(0, 255, 0)");
     }
-
+    
     // DRAWING TEXTS AND SLIDER VALUES
     // all texts have to be done here
     background(128, 138, 159);
@@ -270,9 +252,51 @@ function draw() {
     text("Recording State:", 20, 230);
     states = ["Idle / Playing & Storing Audio", "Recording", "Ready for Use"]
     text(states[state], 120, 230);
-
+    
     // CHANGING VOLUME OF AUDIO
     currSound.setVolume(volumeSlider.value());
     currSound.pan(panSlider.value());
     currSound.rate(rateSlider.value());
+
+    // ===========================
+    // STAGE 2: EFFECT CONTROLS:
+    // ===========================
+
+    // DRAWING TEXTS, BOXES AND SLIDER VALUES
+    push();
+        noFill();
+        // for filters
+        rect(420, 20, 170, 170);
+        rect(600, 20, 170, 170);
+        rect(420, 200, 170, 170);
+        rect(600, 200, 170, 170);
+        // for spectrum drawing
+        rect(20, 250, 180, 120);
+        rect(220, 250, 180, 120);
+    pop();
+
+    // for filters
+    text("LOW-PASS FILTER", 430, 40);
+    text("DYNAMIC COMPRESSOR", 610, 40);
+    text("REVERB", 430, 220);
+    text("DISTORTION", 610, 220);
+    // for spectrum drawing
+    text("SPECTRUM IN", 30, 270);
+    text("SPECTRUM OUT", 230, 270);
+
+    push();
+        textSize(9);
+        text("Freq", 442, 60);
+        text("Res", 478, 60);
+        text("Wet", 512, 60);
+        text("Dry", 515, 149);
+        text("Vol", 550, 60);
+    pop();
+
+    // LOW-PASS FILTER
+    // DYNAMIC COMPRESSOR
+    // REVERB
+    // WAVESHAPER DISTORTION
+    // SPECTRUM IN / OUT
+
 }

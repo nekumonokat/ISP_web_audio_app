@@ -9,15 +9,19 @@
     background-color: RGB(173, 138, 255);
 }
 
-/* styling skip buttons */
-.skipButton, .recordButton {
+/* styling skip, record and apply buttons */
+.skipButton, .recordButton, .applyButton {
     border-radius: 5px;
     color: white;
     background-color: RGB(51, 55, 69);
     width: 115px;
 }
 
-/* styling sliders */
+.applyButton {
+    width: 130px;
+}
+
+/* styling base sliders */
 .slider {
     appearance: none;
     border: 1px solid black;
@@ -29,4 +33,27 @@
     width: 15px;
     height: 15px;
     background-color: RGB(51, 55, 69);
+}
+
+/* styling filter sliders */
+.effectSlider {
+    appearance: none;
+    transform: rotate(-90deg);
+    background-color: RGB(51, 55, 69);
+    width: 70px;
+}
+
+/* styling the slider knobs */
+.effectSlider::-webkit-slider-thumb {
+    appearance: none;
+    width: 5px;
+    height: 20px;
+    border: 1px solid black;
+    background-color: rgb(192, 192, 192);
+}
+
+.effectVolSlider {
+    appearance: none;
+    background-color: RGB(51, 55, 69);
+    width: 70px;
 }

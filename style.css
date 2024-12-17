@@ -10,11 +10,11 @@
 }
 
 /* styling skip buttons */
-.skipButton {
+.skipButton, .recordButton {
     border-radius: 5px;
     color: white;
     background-color: RGB(51, 55, 69);
-    width: 120px;
+    width: 115px;
 }
 
 /* styling sliders */

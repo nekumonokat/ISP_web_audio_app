@@ -38,8 +38,8 @@ function loopToggle() {
     currSound.setLoop(loopOn);
 }
 
-function resetVol() {
-    volumeSlider.value(1);
+function resetMasterVol() {
+    masterVolSlider.value(1);
 }
 
 function resetPan() {

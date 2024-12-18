@@ -9,10 +9,8 @@ function applyLowPass() {
         currSound.disconnect();
         // connecting audio to lowpass filter
         currSound.connect(lowpass);
-        // setting the different components
-        lowpass.freq(lowpassFreqSlider.value());
-        lowpass.res(lowpassResonanceSlider.value());
-        lowpass.drywet(lowpassDryWetSlider.value());
+        // connecting lowpassGain
+        lowpass.connect(lowpassGain);
 
         lowPassEnabled = true;
         lowpassButton.html("DISABLE");
@@ -27,4 +25,8 @@ function applyLowPass() {
         lowPassEnabled = false;
         lowpassButton.html("ENABLE");
     }
+}
+
+function applyCompressor() {
+    pass
 }

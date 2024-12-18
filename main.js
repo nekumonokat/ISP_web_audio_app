@@ -19,8 +19,8 @@ let loopButton, loopOn;
 let recordButton;
 
 // sliders
-let volumeSlider;
-let resetVolButton;
+let masterVolSlider;
+let resetMasterVolButton;
 let panSlider;
 let resetPanButton;
 let rateSlider;
@@ -31,12 +31,15 @@ let resetRateButton;
 // ===========================
 
 // LOW-PASS FILTER
-let lowpass, lowpassButton;
+let lowpass, lowpassGain, lowpassButton;
 let lowpassFreqSlider, lowpassResonanceSlider;
-let lowpassDryWetSlider, lowpassVolumeSlider;
+let lowpassDryWetSlider, lowpassVolSlider;
 
 // DYNAMIC COMPRESSOR
 let compressor;
+let compressorAttackSlider, compressorKneeSlider, compressorReleaseSlider;
+let compressorRatioSlider, compressorThresholdSlider;
+let compressorDryWetSlider, compressorVolSlider;
 
 // REVERB
 let reverb;
@@ -56,6 +59,10 @@ function preload() {
     compressor = new p5.Compressor();
     reverb = new p5.Reverb();
     distortion = new p5.Distortion();
+    // adding gain to control volume of each component
+    lowpassGain = new p5.Gain();
+    lowpass.connect(lowpassGain); // sending lowpass output to gain
+    lowpassGain.connect();
 }
 
 function setup() {
@@ -117,9 +124,9 @@ function setup() {
     loopOn = false;
     
     // VOLUME SLIDER
-    volumeSlider = createSlider(0, 1, 1, 0.01);
-    volumeSlider.position(105, 85);
-    volumeSlider.addClass("slider");
+    masterVolSlider = createSlider(0, 1, 1, 0.01);
+    masterVolSlider.position(105, 85);
+    masterVolSlider.addClass("slider");
     
     // AUDIO PANNING SLIDER
     panSlider = createSlider(-1, 1, 0, 0.01);
@@ -133,19 +140,19 @@ function setup() {
     
     // RESETTING AUDIO SETTINGS
     // creating buttons
-    resetVolButton = createButton("RESET");
+    resetMasterVolButton = createButton("RESET");
     resetPanButton = createButton("RESET");
     resetRateButton = createButton("RESET");
     // setting positions
-    resetVolButton.position(285, 85);
+    resetMasterVolButton.position(285, 85);
     resetPanButton.position(285, 115);
     resetRateButton.position(285, 145);
     // setting action
-    resetVolButton.mousePressed(resetVol);
+    resetMasterVolButton.mousePressed(resetMasterVol);
     resetPanButton.mousePressed(resetPan);
     resetRateButton.mousePressed(resetRate);
     // setting style
-    resetVolButton.addClass("resetButton")
+    resetMasterVolButton.addClass("resetButton")
     resetPanButton.addClass("resetButton")
     resetRateButton.addClass("resetButton")
 
@@ -172,28 +179,65 @@ function setup() {
     // ===========================
 
     // LOW-PASS FILTER
+    let diff1 = 30, origin1 = 405;
     lowpassButton = createButton("ENABLE");
-    lowpassButton.position(440, 160);
+    lowpassButton.position(430, 160);
     lowpassButton.mousePressed(applyLowPass);
     lowpassButton.addClass("applyButton");
+    lowpassButton.style("width", "115px");
     
     lowpassFreqSlider = createSlider(100, 22050, 500, 10);
-    lowpassFreqSlider.position(415, 90);
+    lowpassFreqSlider.position(origin1, 90);
     lowpassFreqSlider.addClass("effectSlider");
     
     lowpassResonanceSlider = createSlider(0, 10, 5, 1);
-    lowpassResonanceSlider.position(450, 90);
+    lowpassResonanceSlider.position(origin1+diff1*1, 90);
     lowpassResonanceSlider.addClass("effectSlider");
     
-    lowpassDryWetSlider = createSlider(0, 1, 0.6, 0.1);
-    lowpassDryWetSlider.position(485, 90);
+    lowpassDryWetSlider = createSlider(0, 1, 0.8, 0.1);
+    lowpassDryWetSlider.position(origin1+diff1*2, 90);
     lowpassDryWetSlider.addClass("effectSlider");
     
-    lowpassVolumeSlider = createSlider(0, 1, 0.5, 0.01);
-    lowpassVolumeSlider.position(520, 90);
-    lowpassVolumeSlider.addClass("effectSlider");
+    lowpassVolSlider = createSlider(0, 1, 0.5, 0.01);
+    lowpassVolSlider.position(origin1+diff1*3, 90);
+    lowpassVolSlider.addClass("effectSlider");
     
     // DYNAMIC COMPRESSOR
+    let diff2 = 28, origin2 = 546;
+    compressorButton = createButton("ENABLE");
+    compressorButton.position(575, 160);
+    compressorButton.mousePressed(applyCompressor);
+    compressorButton.addClass("applyButton");
+    compressorButton.style("width", "180px");
+
+    compressorAttackSlider = createSlider(0, 1, 0.003, 0.001);
+    compressorAttackSlider.position(origin2, 90);
+    compressorAttackSlider.addClass("effectSlider");
+
+    compressorKneeSlider = createSlider(0, 40, 30);
+    compressorKneeSlider.position(origin2+diff2, 90);
+    compressorKneeSlider.addClass("effectSlider");
+
+    compressorReleaseSlider = createSlider(0, 1, 0.25, 0.01);
+    compressorReleaseSlider.position(origin2+diff2*2, 90);
+    compressorReleaseSlider.addClass("effectSlider");
+
+    compressorRatioSlider = createSlider(1, 20, 12);
+    compressorRatioSlider.position(origin2+diff2*3, 90);
+    compressorRatioSlider.addClass("effectSlider");
+
+    compressorThresholdSlider = createSlider(-100, 0, -24);
+    compressorThresholdSlider.position(origin2+diff2*4, 90);
+    compressorThresholdSlider.addClass("effectSlider");
+
+    compressorDryWetSlider = createSlider(0, 1, 0.8, 0.1);
+    compressorDryWetSlider.position(origin2+diff2*5, 90);
+    compressorDryWetSlider.addClass("effectSlider");
+
+    compressorVolSlider = createSlider(0, 1, 0.5, 0.01);
+    compressorVolSlider.position(origin2+diff2*6, 90);
+    compressorVolSlider.addClass("effectSlider");
+
     // REVERB
     // WAVESHAPER DISTORTION
     // SPECTRUM IN / OUT
@@ -243,7 +287,7 @@ function draw() {
     text("Audio Select:", 20, 35);
     text("Audio Volume:", 20, 100);
     // fixed some values that glitch to decimals
-    text(Math.round(volumeSlider.value()*100), 250, 100);
+    text(Math.round(masterVolSlider.value()*100), 250, 100);
     text("Audio Pan:", 20, 130);
     text(panSlider.value(), 250, 130);
     text("Audio Speed:", 20, 160);
@@ -254,7 +298,7 @@ function draw() {
     text(states[state], 120, 230);
     
     // CHANGING VOLUME OF AUDIO
-    currSound.setVolume(volumeSlider.value());
+    currSound.setVolume(masterVolSlider.value());
     currSound.pan(panSlider.value());
     currSound.rate(rateSlider.value());
 
@@ -266,8 +310,8 @@ function draw() {
     push();
         noFill();
         // for filters
-        rect(420, 20, 170, 170);
-        rect(600, 20, 170, 170);
+        rect(420, 20, 135, 170);
+        rect(565, 20, 205, 170);
         rect(420, 200, 170, 170);
         rect(600, 200, 170, 170);
         // for spectrum drawing
@@ -277,7 +321,7 @@ function draw() {
 
     // for filters
     text("LOW-PASS FILTER", 430, 40);
-    text("DYNAMIC COMPRESSOR", 610, 40);
+    text("DYNAMIC COMPRESSOR", 575, 40);
     text("REVERB", 430, 220);
     text("DISTORTION", 610, 220);
     // for spectrum drawing
@@ -286,17 +330,30 @@ function draw() {
 
     push();
         textSize(9);
-        text("Freq", 442, 60);
-        text("Res", 478, 60);
-        text("Wet", 512, 60);
-        text("Dry", 515, 149);
-        text("Vol", 550, 60);
+        // LOW-PASS FILTER
+        text("Freq", 432, 60);
+        text("Res", 464, 60);
+        text("Wet", 493, 60);
+        text("Dry", 496, 149);
+        text("Vol", 525, 60);
+        // DYNAMIC COMPRESSOR
+        text("Attack", 571, 60);
+        text("Knee", 600, 60);
+        text("Rel", 631, 60);
+        text("Ratio", 656, 60);
+        text("Thres", 682, 60);
+        text("Wet", 714, 60);
+        text("Dry", 717, 149);
+        text("Vol", 743, 60);
+        // REVERB
+        // WAVESHAPER DISTORTION
+        // SPECTRUM IN / OUT
     pop();
 
-    // LOW-PASS FILTER
-    // DYNAMIC COMPRESSOR
-    // REVERB
-    // WAVESHAPER DISTORTION
-    // SPECTRUM IN / OUT
+    // CHANGING LOW-PASS FILTER PARAMETERS
+    lowpass.freq(lowpassFreqSlider.value());
+    lowpass.res(lowpassResonanceSlider.value());
+    lowpass.drywet(lowpassDryWetSlider.value());
+    lowpassGain.amp(lowpassVolSlider.value());
 
 }

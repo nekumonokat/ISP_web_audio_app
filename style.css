@@ -21,6 +21,11 @@
     width: 130px;
 }
 
+.revButton {
+    border-radius: 25px;
+    width: 25px; height: 65px;
+}
+
 /* styling base sliders */
 .slider {
     appearance: none;

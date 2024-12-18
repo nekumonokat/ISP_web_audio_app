@@ -19,12 +19,9 @@ let loopButton, loopOn;
 let recordButton;
 
 // sliders
-let masterVolSlider;
-let resetMasterVolButton;
-let panSlider;
-let resetPanButton;
-let rateSlider;
-let resetRateButton;
+let masterVolSlider, resetMasterVolButton;
+let panSlider, resetPanButton;
+let rateSlider, resetRateButton;
 
 // ===========================
 // STAGE 2: EFFECT CONTROLS:
@@ -43,6 +40,9 @@ let compressorDryWetSlider, compressorVolSlider;
 
 // REVERB
 let reverb, reverbGain, reverbButton;
+let reverbDurationSlider, reverbDecayRateSlider;
+let reverbDryWetSlider, reverbVolSlider;
+let reverbReverseButton;
 
 // WAVESHAPER DISTORTION
 let distortion, distortionGain, distortionButton;
@@ -252,7 +252,43 @@ function setup() {
     compressorVolSlider.addClass("effectSlider");
 
     // REVERB
+    let diff3 = 30, origin3 = 405;
+    reverbButton = createButton("ENABLE");
+    reverbButton.position(430, 340);
+    reverbButton.mousePressed(applyReverb);
+    reverbButton.addClass("applyButton");
+    reverbButton.style("width", "150px");
+
+    reverbDurationSlider = createSlider(1, 10, 3);
+    reverbDurationSlider.position(origin3, 270);
+    reverbDurationSlider.addClass("effectSlider");
+
+    reverbDecayRateSlider = createSlider(1, 10, 2);
+    reverbDecayRateSlider.position(origin3+diff3*1, 270);
+    reverbDecayRateSlider.addClass("effectSlider");
+
+    reverbDryWetSlider = createSlider(0, 1, 0.8, 0.1);
+    reverbDryWetSlider.position(origin3+diff3*2, 270);
+    reverbDryWetSlider.addClass("effectSlider");
+
+    reverbVolSlider = createSlider(0, 1, 0.5, 0.01);
+    reverbVolSlider.position(origin3+diff3*3, 270);
+    reverbVolSlider.addClass("effectSlider");
+
+    reverbReverseButton = createButton("O");
+    reverbReverseButton.position(554, 250);
+    reverbReverseButton.mousePressed(reverbReverse);
+    reverbReverseButton.addClass("revButton");
+    reverbReverseButton.style("background", "RGB(234, 43, 31)");
+
     // WAVESHAPER DISTORTION
+    let diff4 = 30, origin4 = 505;
+    distortionButton = createButton("ENABLE");
+    distortionButton.position(610, 340);
+    distortionButton.mousePressed(applyDistortion);
+    distortionButton.addClass("applyButton");
+    distortionButton.style("width", "150px");
+
     // SPECTRUM IN / OUT
 
 }
@@ -266,8 +302,10 @@ function draw() {
     
     if (soundChoice != prevSound) {
         // DISABLING EFFECTS
-        applyLowPass();
-        applyCompressor();
+        if (lowPassEnabled) { applyLowPass(); }
+        if (compressorEnabled) { applyCompressor(); }
+        if (reverbEnabled) { applyReverb(); }
+        if (distortionEnabled) { applyDistortion(); }
 
         // STOPPING AUDIO IF DIFFERENT SELECTION
         if (currSound.isPlaying()) {
@@ -323,7 +361,7 @@ function draw() {
     // STAGE 2: EFFECT CONTROLS:
     // ===========================
 
-    // DRAWING TEXTS, BOXES AND SLIDER VALUES
+    // DRAWING TEXTS AND BOXES
     push();
         noFill();
         // for filters
@@ -363,23 +401,54 @@ function draw() {
         text("Dry", 717, 149);
         text("Vol", 743, 60);
         // REVERB
+        text("Dur", 434, 240);
+        text("Decay", 459, 240);
+        text("Wet", 493, 240);
+        text("Dry", 496, 329);
+        text("Vol", 525, 240);
+        text("Reverse", 549, 240);
         // WAVESHAPER DISTORTION
         // SPECTRUM IN / OUT
     pop();
 
     // CHANGING LOW-PASS FILTER PARAMETERS
-    lowpass.freq(lowpassFreqSlider.value());
-    lowpass.res(lowpassResonanceSlider.value());
-    lowpass.drywet(lowpassDryWetSlider.value());
-    lowpassGain.amp(lowpassVolSlider.value());
+    if (lowPassEnabled) {
+        text("Using lowpass", 170, 390);
+        lowpass.freq(lowpassFreqSlider.value());
+        lowpass.res(lowpassResonanceSlider.value());
+        lowpass.drywet(lowpassDryWetSlider.value());
+        lowpassGain.amp(lowpassVolSlider.value());
+    }
 
     // CHANGING DYNAMIC COMPRESSOR PARAMETERS
-    compressor.attack(compressorAttackSlider.value());
-    compressor.knee(compressorKneeSlider.value());
-    compressor.release(compressorReleaseSlider.value());
-    compressor.ratio(compressorRatioSlider.value());
-    compressor.threshold(compressorThresholdSlider.value());
-    compressor.drywet(compressorDryWetSlider.value());
-    compressorGain.amp(compressorVolSlider.value());
+    if (compressorEnabled) {
+        text("Using compressor", 170, 390);
+        compressor.set(
+            compressorAttackSlider.value(),
+            compressorKneeSlider.value(),
+            compressorRatioSlider.value(),
+            compressorThresholdSlider.value(),
+            compressorReleaseSlider.value()
+        );
+        compressor.drywet(compressorDryWetSlider.value());
+        compressorGain.amp(compressorVolSlider.value());
+    }
+
+    // CHANGING REVERB PARAMETERS
+    console.log(reverbEnabled);
+    if (reverbEnabled) {
+        text("Using reverb", 170, 390);
+        reverb.set(
+            reverbDurationSlider.value(),
+            reverbDecayRateSlider.value(),
+            reverbReverseEnabled
+        );
+        reverb.drywet(reverbDryWetSlider.value());
+        reverbGain.amp(reverbVolSlider.value());
+    }
     
+    if (distortionEnabled) {
+        text("Using distortion", 170, 390);
+    }
+
 }

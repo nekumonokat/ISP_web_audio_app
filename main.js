@@ -36,16 +36,16 @@ let lowpassFreqSlider, lowpassResonanceSlider;
 let lowpassDryWetSlider, lowpassVolSlider;
 
 // DYNAMIC COMPRESSOR
-let compressor;
+let compressor, compressorGain, compressorButton;
 let compressorAttackSlider, compressorKneeSlider, compressorReleaseSlider;
 let compressorRatioSlider, compressorThresholdSlider;
 let compressorDryWetSlider, compressorVolSlider;
 
 // REVERB
-let reverb;
+let reverb, reverbGain, reverbButton;
 
 // WAVESHAPER DISTORTION
-let distortion;
+let distortion, distortionGain, distortionButton;
 
 // SPECTRUM IN / OUT
 
@@ -54,15 +54,28 @@ function preload() {
     industrialSound = loadSound("sounds/476072__jjmarsan__wax-track-industrial-idm-score-music.mp3");
     synthSound = loadSound("sounds/487440__jjmarsan__tattle-vintage-synth-industrial-loop.wav");
 
-    // using of lowpass, compressor, reverb, and distortion
+    // USING OF EFFECTS
     lowpass = new p5.LowPass();
     compressor = new p5.Compressor();
     reverb = new p5.Reverb();
     distortion = new p5.Distortion();
-    // adding gain to control volume of each component
+
+    // ADDING GAINS FOR EFFECTS - used to control volume of each component
+    // creating gains
     lowpassGain = new p5.Gain();
-    lowpass.connect(lowpassGain); // sending lowpass output to gain
+    compressorGain = new p5.Gain();
+    reverbGain = new p5.Gain();
+    distortionGain = new p5.Gain();
+    // connecting gains to effects (sends output to gain)
+    lowpass.connect(lowpassGain);
+    compressor.connect(compressorGain);
+    reverb.connect(reverbGain);
+    distortion.connect(distortionGain);
+    // connecting gains
     lowpassGain.connect();
+    compressorGain.connect();
+    reverbGain.connect();
+    distortionGain.connect();
 }
 
 function setup() {
@@ -252,6 +265,10 @@ function draw() {
     let soundChoice = soundSelect.value();
     
     if (soundChoice != prevSound) {
+        // DISABLING EFFECTS
+        applyLowPass();
+        applyCompressor();
+
         // STOPPING AUDIO IF DIFFERENT SELECTION
         if (currSound.isPlaying()) {
             currSound.stop();
@@ -356,4 +373,13 @@ function draw() {
     lowpass.drywet(lowpassDryWetSlider.value());
     lowpassGain.amp(lowpassVolSlider.value());
 
+    // CHANGING DYNAMIC COMPRESSOR PARAMETERS
+    compressor.attack(compressorAttackSlider.value());
+    compressor.knee(compressorKneeSlider.value());
+    compressor.release(compressorReleaseSlider.value());
+    compressor.ratio(compressorRatioSlider.value());
+    compressor.threshold(compressorThresholdSlider.value());
+    compressor.drywet(compressorDryWetSlider.value());
+    compressorGain.amp(compressorVolSlider.value());
+    
 }

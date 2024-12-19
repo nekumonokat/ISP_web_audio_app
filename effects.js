@@ -61,9 +61,18 @@ function reverbParameters() {
     }
 }
 
-// function distortionParameters() {
-//     pass
-// }
+function distortionParameters() {
+    if (distortionEnabled) {
+        text("Using distortion", 170, 390);
+
+        distortion.set(
+            distortionAmountSlider.value(),
+            distortionOversampleSelect.value()
+        )
+        distortion.drywet(distortionDryWetSlider.value());
+        distortionGain.amp(distortionVolSlider.value());
+    }
+}
 
 // ============================
 // 2: APPLY EFFECTS:
@@ -71,6 +80,11 @@ function reverbParameters() {
 
 function applyLowPass() {
     if (!lowPassEnabled) {
+        // disable all other effects
+        if (compressorEnabled) { applyCompressor(); }
+        if (reverbEnabled) { applyReverb(); }
+        if (distortionEnabled) { applyDistortion(); }
+        
         // disconnecting original audio from output
         currSound.disconnect();
         // connecting audio to lowpass filter
@@ -96,6 +110,11 @@ function applyLowPass() {
 
 function applyCompressor() {
     if (!compressorEnabled) {
+        // disable all other effects
+        if (lowPassEnabled) { applyLowPass(); }
+        if (reverbEnabled) { applyReverb(); }
+        if (distortionEnabled) { applyDistortion(); }
+
         // disconnecting original audio from output
         currSound.disconnect();
         // connecting audio to compressor
@@ -121,6 +140,11 @@ function applyCompressor() {
 
 function applyReverb() {
     if (!reverbEnabled) {
+        // disable all other effects
+        if (lowPassEnabled) { applyLowPass(); }
+        if (compressorEnabled) { applyCompressor(); }
+        if (distortionEnabled) { applyDistortion(); }
+
         // disconnecting original audio from output
         currSound.disconnect();
         // connecting audio to reverb
@@ -161,6 +185,11 @@ function reverbReverse() {
 }
 
 function applyDistortion() {
+    // disable all other effects
+        if (lowPassEnabled) { applyLowPass(); }
+        if (compressorEnabled) { applyCompressor(); }
+        if (reverbEnabled) { applyReverb(); }
+
     if (!distortionEnabled) {
         // disconnecting original audio from output
         currSound.disconnect();

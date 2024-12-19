@@ -73,6 +73,11 @@ function stage2Draws() {
         text("Vol", 525, 240);
         text("Reverse", 549, 240);
         // WAVESHAPER DISTORTION
+        text("Amt", 613, 240);
+        text("Wet", 643, 240);
+        text("Dry", 646, 329);
+        text("Vol", 675, 240);
+        text("Oversample", 703, 240);
         // SPECTRUM IN / OUT
     pop();
 }

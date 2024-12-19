@@ -46,6 +46,9 @@ let reverbReverseButton;
 
 // WAVESHAPER DISTORTION
 let distortion, distortionGain, distortionButton;
+let distortionAmountSlider;
+let distortionOversampleSelect;
+let distortionDryWetSlider, distortionVolSlider;
 
 // SPECTRUM IN / OUT
 
@@ -194,10 +197,7 @@ function draw() {
     compressorParameters();
     // CHANGING REVERB PARAMETERS
     reverbParameters();
-
     // CHANGING DISTORTION PARAMETERS
-    if (distortionEnabled) {
-        text("Using distortion", 170, 390);
-    }
+    distortionParameters();
 
 }

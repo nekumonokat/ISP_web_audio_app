@@ -7,6 +7,68 @@ let reverbEnabled = false;
 let reverbReverseEnabled = false;
 let distortionEnabled = false;
 
+// ============================
+// 1: MODIFY EFFECT PARAMETERS:
+// ============================
+
+// CHANGING LOW-PASS FILTER PARAMETERS
+function lowPassParameters() {
+    if (lowPassEnabled) {
+        text("Using lowpass", 170, 390);
+        lowpass.freq(lowpassFreqSlider.value());
+        lowpass.res(lowpassResonanceSlider.value());
+        lowpass.drywet(lowpassDryWetSlider.value());
+        lowpassGain.amp(lowpassVolSlider.value());
+    }
+}
+
+// CHANGING DYNAMIC COMPRESSOR PARAMETERS
+function compressorParameters() {
+    if (compressorEnabled) {
+        text("Using compressor", 170, 390);
+        compressor.set(
+            compressorAttackSlider.value(),
+            compressorKneeSlider.value(),
+            compressorRatioSlider.value(),
+            compressorThresholdSlider.value(),
+            compressorReleaseSlider.value()
+        );
+        compressor.drywet(compressorDryWetSlider.value());
+        compressorGain.amp(compressorVolSlider.value());
+    }
+}
+
+// CHANGING REVERB PARAMETERS
+function reverbParameters() {
+    if (reverbEnabled) {
+        text("Using reverb", 170, 390);
+
+        // REVERB REVERSE CAUSES ISSUES, WILL NOT USE
+        // reverb.set(
+        //     reverbDurationSlider.value(),
+        //     reverbDecayRateSlider.value(),
+        //     reverbReverseEnabled
+        // );
+        // reverb.drywet(reverbDryWetSlider.value());
+        // reverbGain.amp(reverbVolSlider.value());
+
+        reverb.set(
+            reverbDurationSlider.value(),
+            reverbDecayRateSlider.value()
+        );
+        reverb.drywet(reverbDryWetSlider.value());
+        reverbGain.amp(reverbVolSlider.value());
+    }
+}
+
+// function distortionParameters() {
+//     pass
+// }
+
+// ============================
+// 2: APPLY EFFECTS:
+// ============================
+
 function applyLowPass() {
     if (!lowPassEnabled) {
         // disconnecting original audio from output

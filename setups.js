@@ -239,7 +239,3 @@ function distortSetup() {
     // adding default selection
     distortionOversampleSelect.selected("none");
 }
-
-// function spectrumSetup() {
-//     pass
-// }

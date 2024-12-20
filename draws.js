@@ -6,7 +6,6 @@
 
 // DRAWING TEXTS AND SLIDER VALUES
 function stage1Draws() {
-    background(128, 138, 159);
     text("Audio Select:", 20, 35);
     text("Audio Volume:", 20, 100);
     // fixed some values that glitch to decimals

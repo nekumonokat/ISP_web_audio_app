@@ -92,6 +92,8 @@ function applyLowPass() {
         // connecting effect's gain
         lowpass.connect(lowpassGain);
         lowpassGain.connect();
+        // connecting effect to fftOut
+        fftOut.setInput(lowpassGain);
 
         lowPassEnabled = true;
         lowpassButton.html("DISABLE");
@@ -102,6 +104,8 @@ function applyLowPass() {
         currSound.disconnect();
         // reconnecting audio directly
         currSound.connect();
+        // disconnecting effect from fftOut
+        fftOut.setInput(null);
 
         lowPassEnabled = false;
         lowpassButton.html("ENABLE");
@@ -122,6 +126,8 @@ function applyCompressor() {
         // connecting effect's gain
         compressor.connect(compressorGain);
         compressorGain.connect();
+        // connecting effect to fftOut
+        fftOut.setInput(compressorGain);
     
         compressorEnabled = true;
         compressorButton.html("DISABLE");
@@ -132,6 +138,8 @@ function applyCompressor() {
         currSound.disconnect();
         // reconnecting audio directly
         currSound.connect();
+        // disconnecting effect from fftOut
+        fftOut.setInput(null);
     
         compressorEnabled = false;
         compressorButton.html("ENABLE");
@@ -152,6 +160,8 @@ function applyReverb() {
         // connecting effect's gain
         reverb.connect(reverbGain);
         reverbGain.connect();
+        // connecting effect to fftOut
+        fftOut.setInput(reverbGain);
     
         reverbEnabled = true;
         reverbButton.html("DISABLE");
@@ -162,6 +172,8 @@ function applyReverb() {
         currSound.disconnect();
         // reconnecting audio directly
         currSound.connect();
+        // disconnecting effect from fftOut
+        fftOut.setInput(null);
     
         reverbEnabled = false;
         reverbButton.html("ENABLE");
@@ -198,6 +210,8 @@ function applyDistortion() {
         // connecting effect's gain
         distortion.connect(distortionGain);
         distortionGain.connect();
+        // connecting effect to fftOut
+        fftOut.setInput(distortionGain);
     
         distortionEnabled = true;
         distortionButton.html("DISABLE");
@@ -208,8 +222,26 @@ function applyDistortion() {
         currSound.disconnect();
         // reconnecting audio directly
         currSound.connect();
+        // disconnecting effect from fftOut
+        fftOut.setInput(null);
     
         distortionEnabled = false;
         distortionButton.html("ENABLE");
     }
+}
+
+function drawSpectrum(spectrum, x, y, colour) {
+    push();
+        noFill();
+        stroke(colour);
+        strokeWeight(2);
+
+        beginShape();
+        for (let i = 0; i < spectrum.length; i++) {
+            let xPos = map(i, 0, spectrum.length, x, x+180);
+            let yPos = map(spectrum[i], 0, 255, y+120, y);
+            vertex(xPos, yPos);
+        }
+        endShape();
+    pop();
 }

@@ -51,6 +51,7 @@ let distortionOversampleSelect;
 let distortionDryWetSlider, distortionVolSlider;
 
 // SPECTRUM IN / OUT
+let fftIn, fftOut;
 
 function preload() {
     brightSound = loadSound("sounds/476070__jjmarsan__hello-user-bright-cheery-intro-music.wav");
@@ -79,6 +80,10 @@ function preload() {
     compressorGain.connect();
     reverbGain.connect();
     distortionGain.connect();
+
+    // CONNECTING FFTs FOR ORIGINAL AND MODIFIED AUDIOS
+    fftIn = new p5.FFT();
+    fftOut = new p5.FFT();
 }
 
 function setup() {
@@ -127,11 +132,16 @@ function setup() {
     reverbSetup();
     // WAVESHAPER DISTORTION
     distortSetup();
+
     // SPECTRUM IN / OUT
+    fftIn.setInput(currSound);
+    fftOut.setInput(null);
 
 }
 
 function draw() {
+
+    background(128, 138, 159);
 
     // ===========================
     // STAGE 1: PLAYBACK CONTROLS:
@@ -168,6 +178,8 @@ function draw() {
         
         // SETTING currSound's LOOP
         currSound.setLoop(loopOn);
+        // SETTING fftIn TO currSound
+        fftIn.setInput(currSound);
     }
 
     // CHANGING BUTTON IF AUDIO IS DONE
@@ -187,10 +199,7 @@ function draw() {
     // ===========================
     // STAGE 2: EFFECT CONTROLS:
     // ===========================
-
-    // DRAWING TEXTS AND BOXES
-    stage2Draws();
-
+    
     // CHANGING LOW-PASS FILTER PARAMETERS
     lowPassParameters();
     // CHANGING DYNAMIC COMPRESSOR PARAMETERS
@@ -199,5 +208,14 @@ function draw() {
     reverbParameters();
     // CHANGING DISTORTION PARAMETERS
     distortionParameters();
+    
+    // SPECTRUM IN & OUT
+    spectrumIn = fftIn.analyze();
+    drawSpectrum(spectrumIn, 20, 250, color(0, 0, 255));
+    spectrumOut = fftOut.analyze();
+    drawSpectrum(spectrumOut, 220, 250, color(255, 0, 0));
+    
+    // DRAWING TEXTS AND BOXES
+    stage2Draws();
 
 }

@@ -28,7 +28,7 @@ function stage1Draws() {
 function stage2Draws() {
     push();
         noFill();
-        // for effects
+        // for filters
         rect(420, 20, 135, 170);
         rect(565, 20, 205, 170);
         rect(420, 200, 170, 170);
@@ -38,8 +38,8 @@ function stage2Draws() {
         rect(220, 250, 180, 120);
     pop();
 
-    // for effects
-    text("FILTER", 430, 40);
+    // for filters
+    text("LOW-PASS FILTER", 430, 40);
     text("DYNAMIC COMPRESSOR", 575, 40);
     text("REVERB", 430, 220);
     text("DISTORTION", 610, 220);
@@ -49,7 +49,7 @@ function stage2Draws() {
 
     push();
         textSize(9);
-        // FILTER
+        // LOW-PASS FILTER
         text("Freq", 432, 60);
         text("Res", 464, 60);
         text("Wet", 493, 60);

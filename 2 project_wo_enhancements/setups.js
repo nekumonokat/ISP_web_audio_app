@@ -8,7 +8,6 @@
 function soundSelection() {
     soundSelect = createSelect();
     soundSelect.position(105, 20);
-    soundSelect.addClass("select");
     // adding audio selections
     soundSelect.option("Bright Cheery Intro Music");
     soundSelect.option("Industrial IDM Score Music");
@@ -110,42 +109,31 @@ function recordAudioButton() {
 // STAGE 2: EFFECT CONTROLS:
 // ===========================
 
-// FILTER
-function filterSetup() {
+// LOW-PASS FILTER
+function lpFilterSetup() {
     let diff1 = 30, origin1 = 405;
     // ENABLE BUTTON
-    filterButton = createButton("ENABLE");
-    filterButton.position(430, 160);
-    filterButton.mousePressed(applyFilter);
-    filterButton.addClass("applyButton");
-    filterButton.style("width", "115px");
-    // FILTER TYPE SELECTION
-    filterSelect = createSelect();
-    filterSelect.position(478, 28);
-    filterSelect.addClass("select");
-    // adding filter selections
-    filterSelect.option("lowpass");
-    filterSelect.option("highpass");
-    filterSelect.option("bandpass");
-    // adding default selection
-    filterSelect.selected("lowpass");
-    filterSelect.style("font-size", "10px", "width", "70px");
-    // FREQUENCY
-    filterFreqSlider = createSlider(100, 22050, 500, 10);
-    filterFreqSlider.position(origin1, 90);
-    filterFreqSlider.addClass("effectSlider");
-    // RESONANCE
-    filterResonanceSlider = createSlider(0, 10, 5, 1);
-    filterResonanceSlider.position(origin1+diff1*1, 90);
-    filterResonanceSlider.addClass("effectSlider");
-    // DRY-WET
-    filterDryWetSlider = createSlider(0, 1, 0.8, 0.1);
-    filterDryWetSlider.position(origin1+diff1*2, 90);
-    filterDryWetSlider.addClass("effectSlider");
-    // VOLUME
-    filterVolSlider = createSlider(0, 1, 0.5, 0.01);
-    filterVolSlider.position(origin1+diff1*3, 90);
-    filterVolSlider.addClass("effectSlider");
+    lowpassButton = createButton("ENABLE");
+    lowpassButton.position(430, 160);
+    lowpassButton.mousePressed(applyLowPass);
+    lowpassButton.addClass("applyButton");
+    lowpassButton.style("width", "115px");
+    // LOW-PASS FREQUENCY
+    lowpassFreqSlider = createSlider(100, 22050, 500, 10);
+    lowpassFreqSlider.position(origin1, 90);
+    lowpassFreqSlider.addClass("effectSlider");
+    // LOW-PASS RESONANCE
+    lowpassResonanceSlider = createSlider(0, 10, 5, 1);
+    lowpassResonanceSlider.position(origin1+diff1*1, 90);
+    lowpassResonanceSlider.addClass("effectSlider");
+    // LOW-PASS DRY-WET
+    lowpassDryWetSlider = createSlider(0, 1, 0.8, 0.1);
+    lowpassDryWetSlider.position(origin1+diff1*2, 90);
+    lowpassDryWetSlider.addClass("effectSlider");
+    // LOW-PASS VOLUME
+    lowpassVolSlider = createSlider(0, 1, 0.5, 0.01);
+    lowpassVolSlider.position(origin1+diff1*3, 90);
+    lowpassVolSlider.addClass("effectSlider");
 }
 
 // DYNAMIC COMPRESSOR
@@ -244,7 +232,6 @@ function distortSetup() {
     // DISTORTION OVERSAMPLE
     distortionOversampleSelect = createSelect();
     distortionOversampleSelect.position(origin4+117, 250);
-    distortionOversampleSelect.addClass("select");
     // adding oversample selections
     distortionOversampleSelect.option("none");
     distortionOversampleSelect.option("2x");

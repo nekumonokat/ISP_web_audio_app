@@ -1,7 +1,7 @@
 // THIS CONTAINS ALL EFFECT FUNCTIONS
 
 // TO TOGGLE EACH EFFECT ON / OFF
-let filterEnabled = false;
+let lowPassEnabled = false;
 let compressorEnabled = false;
 let reverbEnabled = false;
 let reverbReverseEnabled = false;
@@ -11,35 +11,14 @@ let distortionEnabled = false;
 // 1: MODIFY EFFECT PARAMETERS:
 // ============================
 
-// CHANGING FILTER PARAMETERS
-function filterParameters() {
-    if (filterEnabled) {
-        let filterType = filterSelect.value();
-
-        if (filterType == "lowpass") {
-            text("Using lowpass", 170, 390);
-            lowpass.freq(filterFreqSlider.value());
-            lowpass.res(filterResonanceSlider.value());
-            lowpass.drywet(filterDryWetSlider.value());
-            lowpassGain.amp(filterVolSlider.value());
-        }
-
-        else if (filterType == "highpass") {
-            text("Using highpass", 170, 390);
-            highpass.freq(filterFreqSlider.value());
-            highpass.res(filterResonanceSlider.value());
-            highpass.drywet(filterDryWetSlider.value());
-            highpassGain.amp(filterVolSlider.value());
-        }
-
-        else if (filterType == "bandpass") {
-            text("Using bandpass", 170, 390);
-            bandpass.freq(filterFreqSlider.value());
-            bandpass.res(filterResonanceSlider.value());
-            bandpass.drywet(filterDryWetSlider.value());
-            bandpassGain.amp(filterVolSlider.value());
-        }
-        
+// CHANGING LOW-PASS FILTER PARAMETERS
+function lowPassParameters() {
+    if (lowPassEnabled) {
+        text("Using lowpass", 170, 390);
+        lowpass.freq(lowpassFreqSlider.value());
+        lowpass.res(lowpassResonanceSlider.value());
+        lowpass.drywet(lowpassDryWetSlider.value());
+        lowpassGain.amp(lowpassVolSlider.value());
     }
 }
 
@@ -99,8 +78,8 @@ function distortionParameters() {
 // 2: APPLY EFFECTS:
 // ============================
 
-function applyFilter() {
-    if (!filterEnabled) {
+function applyLowPass() {
+    if (!lowPassEnabled) {
         // disable all other effects
         if (compressorEnabled) { applyCompressor(); }
         if (reverbEnabled) { applyReverb(); }
@@ -108,40 +87,16 @@ function applyFilter() {
         
         // disconnecting original audio from output
         currSound.disconnect();
-        let filterType = filterSelect.value();
+        // connecting audio to lowpass filter
+        currSound.connect(lowpass);
+        // connecting effect's gain
+        lowpass.connect(lowpassGain);
+        lowpassGain.connect();
+        // connecting effect to fftOut
+        fftOut.setInput(lowpassGain);
 
-        if (filterType == "lowpass") {
-            // connecting audio to lowpass filter
-            currSound.connect(lowpass);
-            // connecting effect's gain
-            lowpass.connect(lowpassGain);
-            lowpassGain.connect();
-            // connecting effect to fftOut
-            fftOut.setInput(lowpassGain);
-        }
-        
-        else if (filterType == "highpass") {
-            // connecting audio to highpass filter
-            currSound.connect(highpass);
-            // connecting effect's gain
-            highpass.connect(highpassGain);
-            highpassGain.connect();
-            // connecting effect to fftOut
-            fftOut.setInput(highpassGain);
-        }
-
-        else if (filterType == "bandpass") {
-            // connecting audio to bandpass filter
-            currSound.connect(bandpass);
-            // connecting effect's gain
-            bandpass.connect(bandpassGain);
-            bandpassGain.connect();
-            // connecting effect to fftOut
-            fftOut.setInput(bandpassGain);
-        }
-
-        filterEnabled = true;
-        filterButton.html("DISABLE");
+        lowPassEnabled = true;
+        lowpassButton.html("DISABLE");
     }
 
     else {
@@ -152,15 +107,15 @@ function applyFilter() {
         // disconnecting effect from fftOut
         fftOut.setInput(null);
 
-        filterEnabled = false;
-        filterButton.html("ENABLE");
+        lowPassEnabled = false;
+        lowpassButton.html("ENABLE");
     }
 }
 
 function applyCompressor() {
     if (!compressorEnabled) {
         // disable all other effects
-        if (filterEnabled) { applyFilter(); }
+        if (lowPassEnabled) { applyLowPass(); }
         if (reverbEnabled) { applyReverb(); }
         if (distortionEnabled) { applyDistortion(); }
 
@@ -194,7 +149,7 @@ function applyCompressor() {
 function applyReverb() {
     if (!reverbEnabled) {
         // disable all other effects
-        if (filterEnabled) { applyFilter(); }
+        if (lowPassEnabled) { applyLowPass(); }
         if (compressorEnabled) { applyCompressor(); }
         if (distortionEnabled) { applyDistortion(); }
 
@@ -243,7 +198,7 @@ function reverbReverse() {
 
 function applyDistortion() {
     // disable all other effects
-        if (filterEnabled) { applyFilter(); }
+        if (lowPassEnabled) { applyLowPass(); }
         if (compressorEnabled) { applyCompressor(); }
         if (reverbEnabled) { applyReverb(); }
 

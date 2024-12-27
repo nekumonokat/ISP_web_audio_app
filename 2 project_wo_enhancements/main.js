@@ -27,10 +27,10 @@ let rateSlider, resetRateButton;
 // STAGE 2: EFFECT CONTROLS:
 // ===========================
 
-// // LOW-PASS FILTER
-// let lowpass, lowpassGain, filterButton;
-// let filterFreqSlider, filterResonanceSlider;
-// let filterDryWetSlider, filterVolSlider;
+// LOW-PASS FILTER
+let lowpass, lowpassGain, lowpassButton;
+let lowpassFreqSlider, lowpassResonanceSlider;
+let lowpassDryWetSlider, lowpassVolSlider;
 
 // DYNAMIC COMPRESSOR
 let compressor, compressorGain, compressorButton;
@@ -53,20 +53,6 @@ let distortionDryWetSlider, distortionVolSlider;
 // SPECTRUM IN / OUT
 let fftIn, fftOut;
 
-// ===========================
-// STAGE 3: ENHANCEMENTS:
-// ===========================
-
-// FILTERS (LP, HP, BP)
-// creating each filter and their gains
-let lowpass, lowpassGain;
-let highpass, highpassGain;
-let bandpass, bandpassGain;
-// modifying the buttons and sliders to control filters
-let filterButton, filterSelect;
-let filterFreqSlider, filterResonanceSlider;
-let filterDryWetSlider, filterVolSlider;
-
 function preload() {
     brightSound = loadSound("sounds/476070__jjmarsan__hello-user-bright-cheery-intro-music.wav");
     industrialSound = loadSound("sounds/476072__jjmarsan__wax-track-industrial-idm-score-music.mp3");
@@ -74,8 +60,6 @@ function preload() {
 
     // USING OF EFFECTS
     lowpass = new p5.LowPass();
-    highpass = new p5.HighPass();
-    bandpass = new p5.BandPass();
     compressor = new p5.Compressor();
     reverb = new p5.Reverb();
     distortion = new p5.Distortion();
@@ -83,22 +67,16 @@ function preload() {
     // ADDING GAINS FOR EFFECTS - controls Gain
     // creating gains
     lowpassGain = new p5.Gain();
-    highpassGain = new p5.Gain();
-    bandpassGain = new p5.Gain();
     compressorGain = new p5.Gain();
     reverbGain = new p5.Gain();
     distortionGain = new p5.Gain();
     // connecting gains to effects (sends output to gain)
     lowpass.connect(lowpassGain);
-    highpass.connect(highpassGain);
-    bandpass.connect(bandpassGain);
     compressor.connect(compressorGain);
     reverb.connect(reverbGain);
     distortion.connect(distortionGain);
     // connecting gains
     lowpassGain.connect();
-    highpassGain.connect();
-    bandpassGain.connect();
     compressorGain.connect();
     reverbGain.connect();
     distortionGain.connect();
@@ -146,8 +124,8 @@ function setup() {
     // STAGE 2: EFFECT CONTROLS:
     // ===========================
 
-    // FILTERS
-    filterSetup();
+    // LOW-PASS FILTER
+    lpFilterSetup();
     // DYNAMIC COMPRESSOR
     compressorSetup();
     // REVERB
@@ -174,7 +152,7 @@ function draw() {
     
     if (soundChoice != prevSound) {
         // DISABLING EFFECTS
-        if (filterEnabled) { applyFilter(); }
+        if (lowPassEnabled) { applyLowPass(); }
         if (compressorEnabled) { applyCompressor(); }
         if (reverbEnabled) { applyReverb(); }
         if (distortionEnabled) { applyDistortion(); }
@@ -222,8 +200,8 @@ function draw() {
     // STAGE 2: EFFECT CONTROLS:
     // ===========================
     
-    // CHANGING FILTER PARAMETERS
-    filterParameters();
+    // CHANGING LOW-PASS FILTER PARAMETERS
+    lowPassParameters();
     // CHANGING DYNAMIC COMPRESSOR PARAMETERS
     compressorParameters();
     // CHANGING REVERB PARAMETERS

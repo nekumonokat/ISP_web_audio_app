@@ -130,6 +130,7 @@ function filterSetup() {
     // adding default selection
     filterSelect.selected("lowpass");
     filterSelect.style("font-size", "10px", "width", "70px");
+    prevFilterSelect = "lowpass"
     // FREQUENCY
     filterFreqSlider = createSlider(100, 22050, 500, 10);
     filterFreqSlider.position(origin1, 90);

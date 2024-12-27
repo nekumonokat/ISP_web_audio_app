@@ -16,6 +16,12 @@ function filterParameters() {
     if (filterEnabled) {
         let filterType = filterSelect.value();
 
+        // disable filter if filter type changed
+        if (filterType != prevFilterSelect) {
+            prevFilterSelect = filterType;
+            applyFilter();
+        }
+
         if (filterType == "lowpass") {
             text("Using lowpass", 170, 390);
             lowpass.freq(filterFreqSlider.value());

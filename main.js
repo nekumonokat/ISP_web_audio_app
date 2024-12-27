@@ -66,6 +66,7 @@ let bandpass, bandpassGain;
 let filterButton, filterSelect;
 let filterFreqSlider, filterResonanceSlider;
 let filterDryWetSlider, filterVolSlider;
+let prevFilterSelect;
 
 function preload() {
     brightSound = loadSound("sounds/476070__jjmarsan__hello-user-bright-cheery-intro-music.wav");

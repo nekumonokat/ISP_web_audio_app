@@ -17,15 +17,18 @@
     width: 115px;
 }
 
+/* styling apply buttons */
 .applyButton {
     width: 130px;
 }
 
+/* styling reverse button */
 .revButton {
     border-radius: 25px;
     width: 25px; height: 65px;
 }
 
+/* styling dropdowns */
 .select {
     background-color: rgb(51, 55, 69);
     color: white;

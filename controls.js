@@ -69,20 +69,22 @@ function recordAudio() {
     // CHANGING FUNCTIONALITY BASED ON STATE
     // 0: idle - goes to recording state
     if (state === 0 && mic.enabled) {
+        state = 1;
         recorder.record(soundFile);
-        state++;
         recordButton.html("STOP")
     }
     // 1: recording - goes to stopping state
     else if (state === 1) {
+        state = 2;
         recorder.stop();
-        state++;
         recordButton.html("USE AUDIO")
     }
     // 2: playback ready - goes to playing & storing state
     else if (state === 2) {
-        soundFile.play();
         state = 0;
+        soundFile.play();
+        // saves file in WAV format
+        save(soundFile, "processed_audio.wav");
         recordButton.html("RECORD");
         soundSelect.selected("Recorded Audio");
         currSound = soundFile;
